@@ -8,9 +8,12 @@ time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 // Es en 2030 asi que no debería haber problema
 const time_t HIGH_VALUE = 1893456000;
 
+// Estado
+int nsa = 0, nsb = 0;
+
 // Acumuladores
 time_t sps = 0, sta = 0;
-int nsa = 0, nsb = 0, red = 0, nta = 0, ntb = 0, stoa = 0, stob = 0;
+int red = 0, nta = 0, ntb = 0, stoa = 0, stob = 0;
 
 int main(){
     srand(time(NULL));
