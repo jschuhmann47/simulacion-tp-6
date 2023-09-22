@@ -1,5 +1,4 @@
 #include "tp.h"
-#include <time.h>
 
 // Variables de control
 const int CANT_PUESTOS_A = 1, CANT_PUESTOS_B = 2;
