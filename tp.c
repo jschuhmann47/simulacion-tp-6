@@ -211,7 +211,7 @@ int se_arrepiente_cola_b(){
 }
 
 int es_high_value(time_t tiempo){
-    return tiempo == HIGH_VALUE;
+    return difftime(tiempo, HIGH_VALUE) == 0;
 }
 
 int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud){
