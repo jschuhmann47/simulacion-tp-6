@@ -10,7 +10,7 @@ const time_t HIGH_VALUE = 1893456000;
 
 // Acumuladores
 time_t sps = 0, sta = 0;
-int nsa = 0, nsb = 0, red = 0, nta = 0, ntb = 0;
+int nsa = 0, nsb = 0, red = 0, nta = 0, ntb = 0, stoa = 0, stob = 0;
 
 int main(){
     srand(time(NULL));
@@ -136,13 +136,45 @@ void llegada_por_a(){
     nsa++;
     nta++;
     if(nsa<=N){
-
+        // duda en el diagrama dice busca el indice en la cola B
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoA,N);
+        stoa += t - itoA[indicePuestoMasOcioso];
+        int tiempoAtencion = generar_tiempo_atencion_A();
+        // en el diagrama esta sin indice
+        tpsA[indicePuestoMasOcioso] = t + tiempoAtencion;
+        sta += tiempoAtencion;
+    }
+    else {
+        // chequear como decir que no hay, porque 0 es un indice valido), revisar esta parte
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoB,M);
+        if (indicePuestoMasOcioso != -1){
+            nsa--;
+            nsb++;
+            stob += t - itoB[indicePuestoMasOcioso];
+            int tiempoAtencion = generar_tiempo_atencion_B();
+            tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
+            sta += tiempoAtencion;
+            red++;
+        }
     }
 
 }
 
 void llegada_por_b(){
-    
+     if(se_arrepiente_cola_b()){
+        return;
+    }
+    nsb++;
+    ntb++;
+    if(nsb<=M){
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoB,M);
+        stob += t - itoB[indicePuestoMasOcioso];
+        int tiempoAtencion = generar_tiempo_atencion_B();
+        // en el diagrama esta sin indice
+        tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
+        sta += tiempoAtencion;
+    }
+    return;
 }
 
 int generar_tiempo_atencion_A(){

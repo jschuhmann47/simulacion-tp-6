@@ -3,7 +3,10 @@
 #include <stdlib.h>
 
 enum variables_de_control{
+    // Cola A
     N = 1,
+
+    // Cola B
     M = 2
 };
 
@@ -35,3 +38,4 @@ void llegada_por_b();
 int se_arrepiente_cola_a();
 int se_arrepiente_cola_b();
 int es_high_value(time_t tiempo);
+int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud);
