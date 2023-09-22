@@ -12,13 +12,12 @@ time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
 // Acumuladores
 time_t sps = 0, sta = 0;
-int nsa = 0, nsb = 0;
+int nsa = 0, nsb = 0, red = 0;
 
 int main(){
     srand(time(NULL));
-    
-    inicializar_array_tiempos(tpsA,N);
-    inicializar_array_tiempos(tpsB,M);
+
+    inicializar_arrays();
 
     int indiceMenorTpsA = buscar_indice_menor_tiempo(tpsA, N);
     int indiceMenorTpsB = buscar_indice_menor_tiempo(tpsB, M);
@@ -43,6 +42,13 @@ int main(){
     printf("%f",generar_numero_random());
 
     return 0;
+}
+
+void inicializar_arrays(){
+    inicializar_array_tiempos(tpsA,N);
+    inicializar_array_tiempos(tpsB,M);
+    inicializar_array_tiempos(itoA,N);
+    inicializar_array_tiempos(itoB,M);
 }
 
 double generar_numero_random() {
@@ -82,7 +88,7 @@ void salida_por_a(int indiceMenorTiempoA){
     nsa--;
 
     if (nsa>=N){
-        int tiempoAtencion = tiempo_atencion_A();
+        int tiempoAtencion = generar_tiempo_atencion_A();
         tpsA[indiceMenorTiempoA] = t + tiempoAtencion;
         sta += tiempoAtencion;
     } else {
@@ -93,14 +99,35 @@ void salida_por_a(int indiceMenorTiempoA){
 }
 
 void salida_por_b(int indiceMenorTpsB){
-
+    sps += (tpsB[indiceMenorTpsB] - t)*(nsa-nsb);
+    t = tpsB[indiceMenorTpsB];
+    nsb--;
+    if (nsa>=N) {
+        nsb++;
+        nsa--;
+        red++;  
+    } else {
+        if (nsb < M){
+            itoB[indiceMenorTpsB] = t;
+            tpsB[indiceMenorTpsB] = 0;
+            return;
+        }
+    }
+    int tiempoAtencion = generar_tiempo_atencion_B();
+    tpsB[indiceMenorTpsB] = t + tiempoAtencion;
+    sta += tiempoAtencion;
 }
 
 void llegada() {
 
 }
 
-int tiempo_atencion_A(){
+int generar_tiempo_atencion_A(){
+    // TODO
+    return 0;
+}
+
+int generar_tiempo_atencion_B(){
     // TODO
     return 0;
 }
