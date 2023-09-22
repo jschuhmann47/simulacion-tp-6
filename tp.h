@@ -2,6 +2,18 @@
 #include <time.h>
 #include <stdlib.h>
 
+enum variables_de_control{
+    N = 1,
+    M = 2
+};
+
+enum cola_elegida {
+    ColaA,
+    ColaB 
+};
+
+typedef enum cola_elegida cola;
+
 void inicializar_arrays();
 
 // Genera un random entre 0 y 1
@@ -16,3 +28,10 @@ void salida_por_b(int indiceMenorTpsB);
 void llegada();
 int generar_tiempo_atencion_A();
 int generar_tiempo_atencion_B();
+int generar_intervalo_reclamo();
+cola generar_clase_de_reclamo();
+void llegada_por_a();
+void llegada_por_b();
+int se_arrepiente_cola_a();
+int se_arrepiente_cola_b();
+int es_high_value(time_t tiempo);
