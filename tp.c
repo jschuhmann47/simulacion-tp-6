@@ -1,5 +1,6 @@
 #include "tp.h"
 #include <bits/types/time_t.h>
+#include <stdio.h>
 #include <time.h>
 
 // Variables de tiempo
@@ -17,7 +18,9 @@ int nsa = 0, nsb = 0;
 
 // Acumuladores
 time_t sps = 0, sta = 0;
-int red = 0, nta = 0, ntb = 0, stoa = 0, stob = 0, sarra = 0, sarrb = 0;
+int red = 0, nta = 0, ntb = 0, sarra = 0, sarrb = 0;
+
+int stoa[N], stob[M];
 
 int main(){
     srand(time(NULL));
@@ -44,6 +47,9 @@ void inicializar_arrays(){
     inicializar_array_tiempos(tpsB, M, HIGH_VALUE);
     inicializar_array_tiempos(itoA, N, 0);
     inicializar_array_tiempos(itoB, M, 0);
+
+    inicializar_array_tiempos_ociosos(stoa,N);
+    inicializar_array_tiempos_ociosos(stob,M);
 }
 
 void ejecutar() {
@@ -71,21 +77,25 @@ void ejecutar() {
 void impresion_de_resultados(){
     int ptoa[N];
     int ptob[M];
-    calcular_resultado_tiempo_ocioso();
-    printf("N (cantidad de puestos A): %d", N);
-    printf("M (cantidad de puestos B): %d", M);
-    printf("PPS: %ld", sps/(nta+ntb));
-    printf("PEC: %ld", (sps-sta)/(nta+ntb));
-    printf("PPDA: %d", 100*sarra/(nta+sarra)); // falta sumar arrepentidos en el diagrama
-    printf("PPDB: %d", 100*sarrb/(ntb+sarrb)); // idem
-    printf("PPRB: %d", red/nta);
-    for (int i = 0; i<N; i++) {
-        printf("PTOA(%d): %d", i+1, ptoa[i]);
+
+    for(int i = 0; i<N; i++){
+        ptoa[i] = stoa[i]*100/t;
+        printf("PTOA(%d): %d\n", i+1, ptoa[i]);
     }
-    for (int i = 0; i<N; i++) {
-        printf("PTOB(%d): %d", i+1, ptob[i]);
+    for(int i = 0; i<M; i++){
+        ptob[i] = stob[i]*100/t;
+        printf("PTOB(%d): %d\n", i+1, ptob[i]);
     }
 
+    printf("N (cantidad de puestos A): %d\n", N);
+    printf("M (cantidad de puestos B): %d\n", M);
+    printf("PPS: %ld\n", sps/(nta+ntb));
+    printf("PEC: %ld\n", (sps-sta)/(nta+ntb));
+    printf("PPDA: %d\n", 100*sarra/(nta+sarra)); // falta sumar arrepentidos en el diagrama
+    printf("PPDB: %d\n", 100*sarrb/(ntb+sarrb)); // idem
+    printf("PPRB: %d\n", red/nta);
+
+    printf("Fin de la simulación\n");
 }
 
 double generar_numero_random() {
@@ -98,6 +108,13 @@ void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial) {
         array++;
     }
     return;
+}
+
+void inicializar_array_tiempos_ociosos(int *array, int longitud){
+    for (int i = 0; i<longitud; i++) {
+        *array = 0;
+        array++;
+    }
 }
 
 int buscar_indice_menor_tiempo(time_t *array, int longitud) {
@@ -175,11 +192,9 @@ void llegada_por_a(){
     nsa++;
     nta++;
     if(nsa<=N){
-        // duda en el diagrama dice busca el indice en la cola B
         int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoA,N);
-        stoa += t - itoA[indicePuestoMasOcioso];
+        stoa[indicePuestoMasOcioso] += t - itoA[indicePuestoMasOcioso];
         int tiempoAtencion = generar_tiempo_atencion_A();
-        // en el diagrama esta sin indice
         tpsA[indicePuestoMasOcioso] = t + tiempoAtencion;
         sta += tiempoAtencion;
     }
@@ -189,7 +204,7 @@ void llegada_por_a(){
         if (indicePuestoMasOcioso != -1){
             nsa--;
             nsb++;
-            stob += t - itoB[indicePuestoMasOcioso];
+            stob[indicePuestoMasOcioso] += t - itoB[indicePuestoMasOcioso];
             int tiempoAtencion = generar_tiempo_atencion_B();
             tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
             sta += tiempoAtencion;
@@ -207,9 +222,8 @@ void llegada_por_b(){
     ntb++;
     if(nsb<=M){
         int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoB,M);
-        stob += t - itoB[indicePuestoMasOcioso];
+        stob[indicePuestoMasOcioso] += t - itoB[indicePuestoMasOcioso];
         int tiempoAtencion = generar_tiempo_atencion_B();
-        // en el diagrama esta sin indice
         tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
         sta += tiempoAtencion;
     }
@@ -227,7 +241,7 @@ int generar_tiempo_atencion_B(){
 }
 
 int generar_intervalo_reclamo(){
-    
+   // TODO 
     return 0;
 }
 
@@ -262,6 +276,7 @@ int es_high_value(time_t tiempo){
 }
 
 int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud){
+    // TODO
     int j = 0;
     for (int i = 0; i<M; i++) {
         if(!es_high_value(tpsB[i])){
@@ -276,8 +291,4 @@ int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud){
         return 0;
     }
     return 1;
-}
-
-void calcular_resultado_tiempo_ocioso(){
-    // duda que en el diagrama esta sin indice y en los resultados con
 }
