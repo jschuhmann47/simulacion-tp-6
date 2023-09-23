@@ -3,7 +3,7 @@
 #include <time.h>
 
 // Variables de tiempo
-time_t tpll, t;
+time_t tpll, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
 // Es en 2030 asi que no debería haber problema
@@ -40,10 +40,10 @@ int main(){
 }
 
 void inicializar_arrays(){
-    inicializar_array_tiempos(tpsA,N);
-    inicializar_array_tiempos(tpsB,M);
-    inicializar_array_tiempos(itoA,N);
-    inicializar_array_tiempos(itoB,M);
+    inicializar_array_tiempos(tpsA, N, HIGH_VALUE);
+    inicializar_array_tiempos(tpsB, M, HIGH_VALUE);
+    inicializar_array_tiempos(itoA, N, 0);
+    inicializar_array_tiempos(itoB, M, 0);
 }
 
 void ejecutar() {
@@ -92,9 +92,9 @@ double generar_numero_random() {
     return (double)rand() / (double)RAND_MAX;
 }
 
-void inicializar_array_tiempos(time_t *array, int longitud) {
+void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial) {
     for (int i = 0; i < longitud; i++) {
-        *array = HIGH_VALUE;
+        *array = valInicial;
         array++;
     }
     return;
@@ -158,8 +158,8 @@ void salida_por_b(int indiceMenorTpsB){
 void llegada() {
     sps += (tpll - t)*(nsa+nsb);
     t = tpll;
-    int tiempoSiguienteReclamo = generar_intervalo_reclamo();
-    tpll = t + tiempoSiguienteReclamo;
+    time_t IR = generar_intervalo_reclamo(); // IR = Intervalo entre reclamos
+    tpll = t + IR;
     cola tipoCola = generar_clase_de_reclamo();
     if (tipoCola == ColaA) {
         llegada_por_a();
