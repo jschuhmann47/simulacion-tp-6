@@ -22,6 +22,8 @@ void inicializar_arrays();
 // Genera un random entre 0 y 1
 double generar_numero_random();
 
+void ejecutar();
+void impresion_de_resultados();
 void inicializar_array_tiempos(time_t *array, int longitud);
 int buscar_indice_menor_tiempo(time_t *array, int longitud);
 int tiempo_es_menor_o_igual(time_t tiempo, time_t tiempo_a_comparar);
@@ -39,3 +41,4 @@ int se_arrepiente_cola_a();
 int se_arrepiente_cola_b();
 int es_high_value(time_t tiempo);
 int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud);
+void calcular_resultado_tiempo_ocioso();
