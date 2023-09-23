@@ -4,7 +4,7 @@
 #include <time.h>
 
 // Variables de tiempo
-time_t tpll, t = 0;
+time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
 // Es en 2030 asi que no debería haber problema
@@ -47,9 +47,8 @@ void inicializar_arrays(){
     inicializar_array_tiempos(tpsB, M, HIGH_VALUE);
     inicializar_array_tiempos(itoA, N, 0);
     inicializar_array_tiempos(itoB, M, 0);
-
-    inicializar_array_tiempos_ociosos(stoa,N);
-    inicializar_array_tiempos_ociosos(stob,M);
+    inicializar_array_tiempos(stoa, N, 0);
+    inicializar_array_tiempos(stob, M, 0);
 }
 
 void ejecutar() {
@@ -77,6 +76,8 @@ void ejecutar() {
 void impresion_de_resultados(){
     int ptoa[N];
     int ptob[M];
+    printf("N (cantidad de puestos A): %d\n", N);
+    printf("M (cantidad de puestos B): %d\n", M);
 
     for(int i = 0; i<N; i++){
         ptoa[i] = stoa[i]*100/t;
@@ -87,12 +88,10 @@ void impresion_de_resultados(){
         printf("PTOB(%d): %d\n", i+1, ptob[i]);
     }
 
-    printf("N (cantidad de puestos A): %d\n", N);
-    printf("M (cantidad de puestos B): %d\n", M);
     printf("PPS: %ld\n", sps/(nta+ntb));
     printf("PEC: %ld\n", (sps-sta)/(nta+ntb));
-    printf("PPDA: %d\n", 100*sarra/(nta+sarra)); // falta sumar arrepentidos en el diagrama
-    printf("PPDB: %d\n", 100*sarrb/(ntb+sarrb)); // idem
+    printf("PPDA: %d\n", 100*sarra/(nta+sarra)); 
+    printf("PPDB: %d\n", 100*sarrb/(ntb+sarrb));
     printf("PPRB: %d\n", red/nta);
 
     printf("Fin de la simulación\n");
@@ -108,13 +107,6 @@ void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial) {
         array++;
     }
     return;
-}
-
-void inicializar_array_tiempos_ociosos(int *array, int longitud){
-    for (int i = 0; i<longitud; i++) {
-        *array = 0;
-        array++;
-    }
 }
 
 int buscar_indice_menor_tiempo(time_t *array, int longitud) {
@@ -142,13 +134,12 @@ void salida_por_a(int indiceMenorTiempoA){
     nsa--;
 
     if (nsa>=N){
-        int tiempoAtencion = generar_tiempo_atencion_A();
-        tpsA[indiceMenorTiempoA] = t + tiempoAtencion;
-        sta += tiempoAtencion;
+        int tiempoAtencionA = generar_tiempo_atencion_A();
+        tpsA[indiceMenorTiempoA] = t + tiempoAtencionA;
+        sta += tiempoAtencionA;
     } else {
-        int i = 0;
-        itoA[i] = t;
-        tpsA[indiceMenorTiempoA] = 0;
+        itoA[indiceMenorTiempoA] = t;
+        tpsA[indiceMenorTiempoA] = HIGH_VALUE;
     }
 }
 
@@ -156,20 +147,20 @@ void salida_por_b(int indiceMenorTpsB){
     sps += (tpsB[indiceMenorTpsB] - t)*(nsa-nsb);
     t = tpsB[indiceMenorTpsB];
     nsb--;
-    if (nsa>=N) {
+    if (nsa>N) {
         nsb++;
         nsa--;
         red++;  
     } else {
         if (nsb < M){
             itoB[indiceMenorTpsB] = t;
-            tpsB[indiceMenorTpsB] = 0;
+            tpsB[indiceMenorTpsB] = HIGH_VALUE;
             return;
         }
     }
-    int tiempoAtencion = generar_tiempo_atencion_B();
-    tpsB[indiceMenorTpsB] = t + tiempoAtencion;
-    sta += tiempoAtencion;
+    int tiempoAtencionB = generar_tiempo_atencion_B();
+    tpsB[indiceMenorTpsB] = t + tiempoAtencionB;
+    sta += tiempoAtencionB;
 }
 
 void llegada() {
@@ -192,22 +183,21 @@ void llegada_por_a(){
     nsa++;
     nta++;
     if(nsa<=N){
-        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoA,N);
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso_N();
         stoa[indicePuestoMasOcioso] += t - itoA[indicePuestoMasOcioso];
-        int tiempoAtencion = generar_tiempo_atencion_A();
-        tpsA[indicePuestoMasOcioso] = t + tiempoAtencion;
-        sta += tiempoAtencion;
+        int tiempoAtencionA = generar_tiempo_atencion_A();
+        tpsA[indicePuestoMasOcioso] = t + tiempoAtencionA;
+        sta += tiempoAtencionA;
     }
     else {
-        // chequear como decir que no hay, porque 0 es un indice valido), revisar esta parte
-        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoB,M);
-        if (indicePuestoMasOcioso != -1){
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso_M();
+        if (indicePuestoMasOcioso != M+1){
             nsa--;
             nsb++;
             stob[indicePuestoMasOcioso] += t - itoB[indicePuestoMasOcioso];
-            int tiempoAtencion = generar_tiempo_atencion_B();
-            tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
-            sta += tiempoAtencion;
+            int tiempoAtencionB = generar_tiempo_atencion_B();
+            tpsB[indicePuestoMasOcioso] = t + tiempoAtencionB;
+            sta += tiempoAtencionB;
             red++;
         }
     }
@@ -221,11 +211,11 @@ void llegada_por_b(){
     nsb++;
     ntb++;
     if(nsb<=M){
-        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso(itoB,M);
+        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso_M();
         stob[indicePuestoMasOcioso] += t - itoB[indicePuestoMasOcioso];
-        int tiempoAtencion = generar_tiempo_atencion_B();
-        tpsB[indicePuestoMasOcioso] = t + tiempoAtencion;
-        sta += tiempoAtencion;
+        int tiempoAtencionB = generar_tiempo_atencion_B();
+        tpsB[indicePuestoMasOcioso] = t + tiempoAtencionB;
+        sta += tiempoAtencionB;
     }
     return;
 }
@@ -275,20 +265,34 @@ int es_high_value(time_t tiempo){
     return difftime(tiempo, HIGH_VALUE) == 0;
 }
 
-int indice_de_puesto_mas_tiempo_ocioso(time_t *array, int longitud){
-    // TODO
+int indice_de_puesto_mas_tiempo_ocioso_M(){
     int j = 0;
-    for (int i = 0; i<M; i++) {
+    for (int i = 1; i<M; i++) {
         if(!es_high_value(tpsB[i])){
             continue;
         }
         if(tiempo_es_menor_o_igual(itoB[i],itoB[j])){
             j = i;
-            // DUDA ACA, PUEDE SETEARSE i=0 Y FALLA?
         }
     }
     if(j==0 && !es_high_value(tpsB[0])){
-        return 0;
+        return M+1;
     }
-    return 1;
+    return j;
+}
+
+int indice_de_puesto_mas_tiempo_ocioso_N(){
+    int j = 0;
+    for (int i = 1; i<N; i++) {
+        if(!es_high_value(tpsA[i])){
+            continue;
+        }
+        if(tiempo_es_menor_o_igual(itoA[i],itoA[j])){
+            j = i;
+        }
+    }
+    if(j==0 && !es_high_value(tpsA[0])){
+        return N+1;
+    }
+    return j;
 }
