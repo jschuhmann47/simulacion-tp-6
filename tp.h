@@ -5,10 +5,10 @@
 
 enum variables_de_control{
     // Cola A
-    N = 1,
+    N = 10,
 
     // Cola B
-    M = 2
+    M = 50
 };
 
 enum cola_elegida {

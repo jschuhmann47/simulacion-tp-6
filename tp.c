@@ -4,9 +4,9 @@
 time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
-const time_t HIGH_VALUE = 5000;
+const time_t HIGH_VALUE = 15000000;
 
-const time_t FINAL_TIME = 5;
+const time_t FINAL_TIME = 50000;
 
 // Estado
 int nsa = 0, nsb = 0;
@@ -18,22 +18,28 @@ int red = 0, nta = 0, ntb = 0, sarra = 0, sarrb = 0;
 time_t stoa[N], stob[M];
 
 int main(){
-    printf("start\n");
+    printf("Inicio\n");
     srand((unsigned int) time(NULL));
     inicializar_arrays();
-    printf("arrays inicializados\n");
+    printf("Arrays inicializados\n");
 
+    printf("Inicio ejecucion\n");
     do {
        ejecutar();
     } while (t<FINAL_TIME);
+    printf("Fin ejecucion\n");
 
     // vaciamiento
+    printf("Vaciamiento\n");
     tpll = HIGH_VALUE;
     while (nsa != 0 || nsb != 0) {
         ejecutar();
     }
+    printf("Fin vaciamiento\n");
    
     impresion_de_resultados();
+
+    printf("Fin de la simulación\n");
 
     return 0;
 }
@@ -90,12 +96,14 @@ void impresion_de_resultados(){
     printf("PPDA: %d\n", 100*sarra/(nta+sarra)); 
     printf("PPDB: %d\n", 100*sarrb/(ntb+sarrb));
     printf("PPRB: %d\n", red/nta);
-
-    printf("Fin de la simulación\n");
 }
 
-double generar_numero_random() {
-    return (double)rand() / (double)RAND_MAX;
+double generar_numero_random(double min, double max) {
+    double resultado;
+    do {
+        resultado = (double)rand() / (double)RAND_MAX;
+    } while (resultado < min || resultado > max);
+    return resultado;
 }
 
 void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial) {
@@ -220,22 +228,22 @@ void llegada_por_b(){
 }
 
 int generar_tiempo_atencion_A(){
-    // TODO
-    return 30;
+    double rand = generar_numero_random(0,0.99);
+    return (int) (3083.1*(pow(-log(1-rand),(1/0.84892))));
 }
 
 int generar_tiempo_atencion_B(){
-    // TODO
-    return 30;
+    double rand = generar_numero_random(0,0.99);
+    return (int) (2180.9*(pow(-log(1-rand),(1/0.77918))));
 }
 
 int generar_intervalo_reclamo(){
-    double rand = generar_numero_random();
+    double rand = generar_numero_random(0,1);
     return (int) (-45.023 * (pow((1-rand),(1/11.792)) - 1) * pow((1-rand),(-1/11.792)));
 }
 
 cola generar_clase_de_reclamo(){
-    double rand = generar_numero_random();
+    double rand = generar_numero_random(0,1);
     if(rand <= 0.0484){
         return ColaA;
     }
@@ -243,7 +251,7 @@ cola generar_clase_de_reclamo(){
 }
 
 int se_arrepiente_cola_a(){
-    double rand = generar_numero_random();
+    double rand = generar_numero_random(0,1);
     if(rand < 0.1681){
         sarra++;
         return 1;
@@ -252,7 +260,7 @@ int se_arrepiente_cola_a(){
 }
 
 int se_arrepiente_cola_b(){
-    double rand = generar_numero_random();
+    double rand = generar_numero_random(0,1);
     if(rand < 0.1708){
         sarrb++;
         return 1;
