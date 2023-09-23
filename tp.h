@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdlib.h>
+#include <math.h>
 
 enum variables_de_control{
     // Cola A
@@ -25,7 +26,7 @@ double generar_numero_random();
 void ejecutar();
 void impresion_de_resultados();
 void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial);
-int buscar_indice_menor_tiempo(time_t *array, int longitud);
+int buscar_indice_menor_tiempo(const time_t *array, int longitud);
 int tiempo_es_menor_o_igual(time_t tiempo, time_t tiempo_a_comparar);
 int tiempo_es_menor(time_t tiempo, time_t tiempo_a_comparar);
 void salida_por_a(int indiceMenorTpsA);

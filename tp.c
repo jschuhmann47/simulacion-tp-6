@@ -1,17 +1,12 @@
 #include "tp.h"
-#include <bits/types/time_t.h>
-#include <stdio.h>
-#include <time.h>
 
 // Variables de tiempo
 time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
-// Es en 2030 asi que no debería haber problema
-const time_t HIGH_VALUE = 1893456000;
+const time_t HIGH_VALUE = 5000;
 
-// TF, le puse Wed, 01 Nov 2023 00:00:00 GMT
-const time_t FINAL_TIME = 1698796800;
+const time_t FINAL_TIME = 5;
 
 // Estado
 int nsa = 0, nsb = 0;
@@ -20,12 +15,13 @@ int nsa = 0, nsb = 0;
 time_t sps = 0, sta = 0;
 int red = 0, nta = 0, ntb = 0, sarra = 0, sarrb = 0;
 
-int stoa[N], stob[M];
+time_t stoa[N], stob[M];
 
 int main(){
-    srand(time(NULL));
-
+    printf("start\n");
+    srand((unsigned int) time(NULL));
     inicializar_arrays();
+    printf("arrays inicializados\n");
 
     do {
        ejecutar();
@@ -52,6 +48,7 @@ void inicializar_arrays(){
 }
 
 void ejecutar() {
+    
     int indiceMenorTpsA = buscar_indice_menor_tiempo(tpsA, N);
     int indiceMenorTpsB = buscar_indice_menor_tiempo(tpsB, M);
 
@@ -74,18 +71,18 @@ void ejecutar() {
 }
 
 void impresion_de_resultados(){
-    int ptoa[N];
-    int ptob[M];
+    long int ptoa[N];
+    long int ptob[M];
     printf("N (cantidad de puestos A): %d\n", N);
     printf("M (cantidad de puestos B): %d\n", M);
 
     for(int i = 0; i<N; i++){
         ptoa[i] = stoa[i]*100/t;
-        printf("PTOA(%d): %d\n", i+1, ptoa[i]);
+        printf("PTOA(%d): %ld\n", i+1, ptoa[i]);
     }
     for(int i = 0; i<M; i++){
         ptob[i] = stob[i]*100/t;
-        printf("PTOB(%d): %d\n", i+1, ptob[i]);
+        printf("PTOB(%d): %ld\n", i+1, ptob[i]);
     }
 
     printf("PPS: %ld\n", sps/(nta+ntb));
@@ -109,15 +106,14 @@ void inicializar_array_tiempos(time_t *array, int longitud, time_t valInicial) {
     return;
 }
 
-int buscar_indice_menor_tiempo(time_t *array, int longitud) {
-    int min = 0;
+int buscar_indice_menor_tiempo(const time_t *array, int longitud) {
+    int minIndice = 0;
     for (int i = 1; i < longitud; i++) {
-        if (*array < min){
-            min = i;
+        if (difftime(array[i], array[minIndice]) < 0){
+            minIndice = i;
         }
-        array++;
     }
-    return min;
+    return minIndice;
 }
 
 int tiempo_es_menor_o_igual(time_t tiempo, time_t tiempoAComparar) {
@@ -128,23 +124,25 @@ int tiempo_es_menor(time_t tiempo, time_t tiempoAComparar) {
     return difftime(tiempo, tiempoAComparar) < 0;
 }
 
-void salida_por_a(int indiceMenorTiempoA){
-    sps += (tpsA[indiceMenorTiempoA]-t)*(nsa-nsb);
-    t = tpsA[indiceMenorTiempoA];
+void salida_por_a(int indiceMenorTpsA){
+    printf("salida por A=%ld\n", tpsA[indiceMenorTpsA]);
+    sps += (tpsA[indiceMenorTpsA]-t)*(nsa+nsb);
+    t = tpsA[indiceMenorTpsA];
     nsa--;
 
     if (nsa>=N){
         int tiempoAtencionA = generar_tiempo_atencion_A();
-        tpsA[indiceMenorTiempoA] = t + tiempoAtencionA;
+        tpsA[indiceMenorTpsA] = t + tiempoAtencionA;
         sta += tiempoAtencionA;
     } else {
-        itoA[indiceMenorTiempoA] = t;
-        tpsA[indiceMenorTiempoA] = HIGH_VALUE;
+        itoA[indiceMenorTpsA] = t;
+        tpsA[indiceMenorTpsA] = HIGH_VALUE;
     }
 }
 
 void salida_por_b(int indiceMenorTpsB){
-    sps += (tpsB[indiceMenorTpsB] - t)*(nsa-nsb);
+    printf("salida por B=%ld\n", tpsB[indiceMenorTpsB]);
+    sps += (tpsB[indiceMenorTpsB] - t)*(nsa+nsb);
     t = tpsB[indiceMenorTpsB];
     nsb--;
     if (nsa>N) {
@@ -164,10 +162,11 @@ void salida_por_b(int indiceMenorTpsB){
 }
 
 void llegada() {
+    printf("llegada con tpll=%ld, t=%ld\n", tpll, t);
     sps += (tpll - t)*(nsa+nsb);
     t = tpll;
-    time_t IR = generar_intervalo_reclamo(); // IR = Intervalo entre reclamos
-    tpll = t + IR;
+    time_t intervaloEntreReclamos = generar_intervalo_reclamo();
+    tpll = t + intervaloEntreReclamos;
     cola tipoCola = generar_clase_de_reclamo();
     if (tipoCola == ColaA) {
         llegada_por_a();
@@ -222,17 +221,17 @@ void llegada_por_b(){
 
 int generar_tiempo_atencion_A(){
     // TODO
-    return 0;
+    return 30;
 }
 
 int generar_tiempo_atencion_B(){
     // TODO
-    return 0;
+    return 30;
 }
 
 int generar_intervalo_reclamo(){
-   // TODO 
-    return 0;
+    double rand = generar_numero_random();
+    return (int) (-45.023 * (pow((1-rand),(1/11.792)) - 1) * pow((1-rand),(-1/11.792)));
 }
 
 cola generar_clase_de_reclamo(){

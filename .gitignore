@@ -54,3 +54,6 @@ dkms.conf
 tp
 *.json
 .cache/
+*.code-workspace
+build/
+log
