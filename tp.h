@@ -8,7 +8,7 @@ enum variables_de_control{
     N = 10,
 
     // Cola B
-    M = 50
+    M = 300
 };
 
 enum cola_elegida {

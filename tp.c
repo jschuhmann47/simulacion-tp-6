@@ -4,7 +4,7 @@
 time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
-const time_t HIGH_VALUE = 15000000;
+const time_t HIGH_VALUE = 1500000;
 
 const time_t FINAL_TIME = 50000;
 
@@ -18,16 +18,15 @@ int red = 0, nta = 0, ntb = 0, sarra = 0, sarrb = 0;
 time_t stoa[N], stob[M];
 
 int main(){
-    printf("Inicio\n");
+    printf("Inicio de la simulación\n");
     srand((unsigned int) time(NULL));
     inicializar_arrays();
-    printf("Arrays inicializados\n");
 
-    printf("Inicio ejecucion\n");
+    printf("Inicio de ejecución\n");
     do {
        ejecutar();
     } while (t<FINAL_TIME);
-    printf("Fin ejecucion\n");
+    printf("Fin de ejecución\n");
 
     // vaciamiento
     printf("Vaciamiento\n");
@@ -35,7 +34,7 @@ int main(){
     while (nsa != 0 || nsb != 0) {
         ejecutar();
     }
-    printf("Fin vaciamiento\n");
+    printf("Fin de vaciamiento\n");
    
     impresion_de_resultados();
 
@@ -58,11 +57,17 @@ void ejecutar() {
     int indiceMenorTpsA = buscar_indice_menor_tiempo(tpsA, N);
     int indiceMenorTpsB = buscar_indice_menor_tiempo(tpsB, M);
 
+
     if(tiempo_es_menor_o_igual(tpsA[indiceMenorTpsA],tpsB[indiceMenorTpsB])){
         if(tiempo_es_menor(tpsA[indiceMenorTpsA], tpll)){
             salida_por_a(indiceMenorTpsA);
         }
         else {
+            if(es_high_value(tpll)){
+                nsa = 0;
+                nsb = 0;
+                return;
+            }
             llegada();
         }
     }
@@ -71,6 +76,11 @@ void ejecutar() {
             salida_por_b(indiceMenorTpsB);
         }
         else {
+            if(es_high_value(tpll)){
+                nsa = 0;
+                nsb = 0;
+                return;
+            }
             llegada();
         }
     }
@@ -81,6 +91,8 @@ void impresion_de_resultados(){
     long int ptob[M];
     printf("N (cantidad de puestos A): %d\n", N);
     printf("M (cantidad de puestos B): %d\n", M);
+    printf("NTA: %d reclamos\n", nta); 
+    printf("NTB: %d reclamos\n", ntb);
 
     for(int i = 0; i<N; i++){
         ptoa[i] = stoa[i]*100/t;
@@ -91,11 +103,20 @@ void impresion_de_resultados(){
         printf("PTOB(%d): %ld\n", i+1, ptob[i]);
     }
 
-    printf("PPS: %ld\n", sps/(nta+ntb));
-    printf("PEC: %ld\n", (sps-sta)/(nta+ntb));
-    printf("PPDA: %d\n", 100*sarra/(nta+sarra)); 
-    printf("PPDB: %d\n", 100*sarrb/(ntb+sarrb));
-    printf("PPRB: %d\n", red/nta);
+    // evitar division por 0 en caso de que no llegue nadie por alguna de las colas
+    if(nta != 0 || ntb != 0){
+        printf("PPDA: %.2f%%\n", (double)100*sarra/(nta+sarra)); 
+        printf("PPDB: %.2f%%\n",  (double)100*sarrb/(ntb+sarrb));
+        printf("PPS: %.3f minutos\n", (double)sps/((nta+ntb)*60));
+        printf("PEC: %.3f minutos\n", (double)(sps-sta)/((nta+ntb)*60));
+        printf("PPRB: %.2f%%\n", (double) red/nta);
+    } else {
+        printf("PPDA: 0\n"); 
+        printf("PPS: 0\n");
+        printf("PEC: 0\n");
+        printf("PPDB: 0\n");
+        printf("PPRB: 0\n");
+    }
 }
 
 double generar_numero_random(double min, double max) {
