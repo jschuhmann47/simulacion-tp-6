@@ -4,9 +4,9 @@
 time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
-const time_t HIGH_VALUE = 1500000;
+const time_t HIGH_VALUE = 99999999;
 
-const time_t FINAL_TIME = 50000;
+const time_t FINAL_TIME = 99999;
 
 // Estado
 int nsa = 0, nsb = 0;
@@ -154,10 +154,11 @@ int tiempo_es_menor(time_t tiempo, time_t tiempoAComparar) {
 }
 
 void salida_por_a(int indiceMenorTpsA){
-    printf("salida por A=%ld\n", tpsA[indiceMenorTpsA]);
+    //printf("salida por A=%ld\n", tpsA[indiceMenorTpsA]);
     sps += (tpsA[indiceMenorTpsA]-t)*(nsa+nsb);
     t = tpsA[indiceMenorTpsA];
     nsa--;
+    printf("NSA=%d\n", nsa);
 
     if (nsa>=N){
         int tiempoAtencionA = generar_tiempo_atencion_A();
@@ -170,10 +171,12 @@ void salida_por_a(int indiceMenorTpsA){
 }
 
 void salida_por_b(int indiceMenorTpsB){
-    printf("salida por B=%ld\n", tpsB[indiceMenorTpsB]);
+    //printf("salida por B=%ld\n", tpsB[indiceMenorTpsB]);
     sps += (tpsB[indiceMenorTpsB] - t)*(nsa+nsb);
     t = tpsB[indiceMenorTpsB];
     nsb--;
+    printf("NSB=%d\n", nsb);
+
     if (nsa>N) {
         nsb++;
         nsa--;
@@ -218,8 +221,8 @@ void llegada_por_a(){
         sta += tiempoAtencionA;
     }
     else {
-        int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso_M();
-        if (indicePuestoMasOcioso != M+1){
+        if (nsb < M) {
+            int indicePuestoMasOcioso = indice_de_puesto_mas_tiempo_ocioso_M();
             nsa--;
             nsb++;
             stob[indicePuestoMasOcioso] += t - itoB[indicePuestoMasOcioso];
@@ -229,7 +232,6 @@ void llegada_por_a(){
             red++;
         }
     }
-
 }
 
 void llegada_por_b(){
@@ -303,9 +305,6 @@ int indice_de_puesto_mas_tiempo_ocioso_M(){
             j = i;
         }
     }
-    if(j==0 && !es_high_value(tpsB[0])){
-        return M+1;
-    }
     return j;
 }
 
@@ -318,9 +317,6 @@ int indice_de_puesto_mas_tiempo_ocioso_N(){
         if(tiempo_es_menor_o_igual(itoA[i],itoA[j])){
             j = i;
         }
-    }
-    if(j==0 && !es_high_value(tpsA[0])){
-        return N+1;
     }
     return j;
 }
