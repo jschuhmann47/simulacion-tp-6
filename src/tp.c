@@ -4,9 +4,9 @@
 time_t tpll = 0, t = 0;
 time_t tpsA[N], tpsB[M], itoA[N], itoB[M];
 
-const time_t HIGH_VALUE = 99999999999;
+const time_t HIGH_VALUE = 2145916800;
 
-const time_t FINAL_TIME = 1000;
+const time_t FINAL_TIME = 999999999;
 
 // Estado
 int nsa = 0, nsb = 0;
@@ -31,7 +31,6 @@ int main(){
        ejecutar();
     } while (t<FINAL_TIME);
     printf("Fin de ejecución\n");
-    printf("NSA=%d y NSB=%d\n", nsa, nsb);
 
     // vaciamiento
     printf("Vaciamiento\n");
@@ -71,22 +70,6 @@ void ejecutar() {
             salida_por_a(indiceMenorTpsA);
         }
         else {
-            if(es_high_value(tpll)){
-            printf("TPSA=%ld y TPSB=%ld y TPLL=%ld \n", tpsA[indiceMenorTpsA],tpsB[indiceMenorTpsB], tpll);
-            for(int i = 0; i < N; i++)  {
-                printf("TPSA(%d)=%ld - ", i, tpsA[i]); 
-            }
-            printf("\n"); 
-            for(int i = 0; i < M; i++)  {
-                printf("TPSB(%d)=%ld - ", i , tpsB[i]); 
-            }
-            printf("\n"); 
-            printf("NSA=%d y NSB=%d\n", nsa, nsb);
-
-                nsa = 0;
-                nsb = 0;
-                return;
-            }
             llegada();
         }
     }
@@ -95,12 +78,6 @@ void ejecutar() {
             salida_por_b(indiceMenorTpsB);
         }
         else {
-            if(es_high_value(tpll)){
-            printf("NSA=%d y NSB=%d\n", nsa, nsb);
-                nsa = 0;
-                nsb = 0;
-                return;
-            }
             llegada();
         }
     }
@@ -274,9 +251,9 @@ void llegada_por_b(){
 
 int generar_tiempo_atencion_A(){
     double rand = generar_numero_random(0,0.99);
-    //return (int) (rand*(29.92+0.23167)/(0.23167)) * 60;
+    return (int) (rand*(29.92+0.23167)/(0.23167)) * 60;
 
-    return (int) (3083.1*(pow(-log(1-rand),(1/0.84892)))) * 60;
+    //return (int) (3083.1*(pow(-log(1-rand),(1/0.84892)))) * 60;
 }
 
 int generar_tiempo_atencion_B(){
@@ -284,8 +261,6 @@ int generar_tiempo_atencion_B(){
     return (int) (rand*(29.92+0.23167)/(0.23167)) * 60;
     
     //return (int) (2180.9*(pow(-log(1-rand),(1/0.77918)))) * 60;
-    //2180.9
-    //450
 }
 
 int generar_intervalo_reclamo(){
@@ -326,27 +301,33 @@ int es_high_value(time_t tiempo){
 }
 
 int indice_de_puesto_mas_tiempo_ocioso_M(){
-    int j = 0;
-    for (int i = 1; i<M; i++) {
-        if(!es_high_value(tpsB[i])){
-            continue;
-        }
-        if(tiempo_es_menor(itoB[i],itoB[j])){
-            j = i;
+    int j = primero_HV(tpsB, M);
+    for (int i = j+1; i<M; i++) {
+        if(es_high_value(tpsB[i])){
+            if(tiempo_es_menor(itoB[i],itoB[j])) {
+                j = i;
+            }
         }
     }
     return j;
 }
 
 int indice_de_puesto_mas_tiempo_ocioso_N(){
-    int j = 0;
-    for (int i = 1; i<N; i++) {
-        if(!es_high_value(tpsA[i])){
-            continue;
-        }
-        if(tiempo_es_menor(itoA[i],itoA[j])){
-            j = i;
+    int j = primero_HV(tpsA, N);
+    for (int i = j+1; i<N; i++) {
+        if(es_high_value(tpsA[i])){
+            if(tiempo_es_menor(itoA[i],itoA[j])) {
+                j = i;
+            }
         }
     }
     return j;
+}
+
+int primero_HV(time_t* ito, int tamanio) {
+    for (int i = 0; i < tamanio; i++) {
+        if (es_high_value(ito[i]))
+            return i;
+    }
+return 0;
 }

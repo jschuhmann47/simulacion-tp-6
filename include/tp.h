@@ -5,10 +5,10 @@
 
 enum variables_de_control{
     // Cola A
-    N = 2,
+    N = 1,
 
     // Cola B
-    M = 10
+    M = 16
 };
 
 enum cola_elegida {
@@ -43,3 +43,4 @@ int se_arrepiente_cola_b();
 int es_high_value(time_t tiempo);
 int indice_de_puesto_mas_tiempo_ocioso_N();
 int indice_de_puesto_mas_tiempo_ocioso_M();
+int primero_HV(time_t* ito, int tamanio);
