@@ -5,10 +5,10 @@
 
 enum variables_de_control{
     // Cola A
-    N = 1,
+    N = 3,
 
     // Cola B
-    M = 17
+    M = 30
 };
 
 enum cola_elegida {
@@ -21,7 +21,7 @@ typedef enum cola_elegida cola;
 void inicializar_arrays();
 
 // Genera un random entre 0 y 1
-double generar_numero_random();
+double generar_numero_random(double min, double max);
 
 void ejecutar();
 void impresion_de_resultados();
@@ -43,4 +43,4 @@ int se_arrepiente_cola_b();
 int es_high_value(time_t tiempo);
 int indice_de_puesto_mas_tiempo_ocioso_N();
 int indice_de_puesto_mas_tiempo_ocioso_M();
-int primero_HV(time_t* ito, int tamanio);
+int primer_tiempo_high_value(const time_t *array, int tamanio);
