@@ -176,9 +176,9 @@ void salida_por_b(int indiceMenorTpsB){
         nsb++;
         nsa--;
         red++;
-        int tiempoAtencionB = generar_tiempo_atencion_B();
-        tpsB[indiceMenorTpsB] = t + tiempoAtencionB;
-        sta += tiempoAtencionB;
+        int tiempoAtencionA = generar_tiempo_atencion_A();
+        tpsB[indiceMenorTpsB] = t + tiempoAtencionA;
+        sta += tiempoAtencionA;
     } else {
         if (nsb < M){
             itoB[indiceMenorTpsB] = t;
@@ -250,24 +250,19 @@ void llegada_por_b(){
 }
 
 int generar_tiempo_atencion_A(){
-    double rand = generar_numero_random(0,0.99);
-    return (int) (rand*(29.92+0.23167)/(0.23167)) * 60;
-
-    //return (int) (3083.1*(pow(-log(1-rand),(1/0.84892)))) * 60;
+    double rand = generar_numero_random(0,1);
+    return (int) (-0.89306 + 117.44*(pow(rand, 0.96368) - 1)/-0.96368) * 60;
+    //return 14400;
 }
 
 int generar_tiempo_atencion_B(){
     double rand = generar_numero_random(0,1);
     return (int) (rand*(29.92+0.23167)/(0.23167)) * 60;
-    
-    //return (int) (2180.9*(pow(-log(1-rand),(1/0.77918)))) * 60;
 }
 
 int generar_intervalo_reclamo(){
     double rand = generar_numero_random(0.0000001,1);
     return (int) (-45.023 * (pow((1-rand),(1/11.792)) - 1) * pow((1-rand),(-1/11.792))) * 60;
-    //45.023
-    //4000
 }
 
 cola generar_clase_de_reclamo(){
