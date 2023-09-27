@@ -1,0 +1,48 @@
+Inicio de la simulación
+Inicio de ejecución
+Fin de ejecución
+Vaciamiento
+Fin de vaciamiento
+N (cantidad de puestos A): 3
+M (cantidad de puestos B): 30
+NTA: 18205 reclamos
+NTB: 356711 reclamos
+PTOA(1): 39%
+PTOA(2): 39%
+PTOA(3): 39%
+PTOB(1): 53%
+PTOB(2): 52%
+PTOB(3): 52%
+PTOB(4): 53%
+PTOB(5): 52%
+PTOB(6): 53%
+PTOB(7): 52%
+PTOB(8): 52%
+PTOB(9): 53%
+PTOB(10): 52%
+PTOB(11): 53%
+PTOB(12): 53%
+PTOB(13): 53%
+PTOB(14): 53%
+PTOB(15): 52%
+PTOB(16): 52%
+PTOB(17): 52%
+PTOB(18): 52%
+PTOB(19): 52%
+PTOB(20): 53%
+PTOB(21): 53%
+PTOB(22): 53%
+PTOB(23): 52%
+PTOB(24): 52%
+PTOB(25): 52%
+PTOB(26): 52%
+PTOB(27): 53%
+PTOB(28): 52%
+PTOB(29): 53%
+PTOB(30): 53%
+PPDA: 17.01%
+PPDB: 17.01%
+PPS: 70.810 minutos
+PEC: 0.004 minutos
+PPRB: 0.30%
+Fin de la simulación

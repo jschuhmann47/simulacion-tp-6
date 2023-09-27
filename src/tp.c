@@ -39,7 +39,6 @@ int main(){
         ejecutar();
     }
     printf("Fin de vaciamiento\n");
-    printf("NSA=%d y NSB=%d\n", nsa, nsb);
    
     impresion_de_resultados();
 
@@ -220,12 +219,13 @@ void impresion_de_resultados(){
 
 int generar_tiempo_atencion_A(){
     double rand = generar_numero_random(0,1);
-    return (int) (-0.89306 + 117.44*(pow(rand, 0.96368) - 1)/-0.96368) * 60;
+    return (int) (149.23 + 172.32*(pow(rand, 0.94075) - 1)/-0.94075) * 60;
 }
 
 int generar_tiempo_atencion_B(){
-    double rand = generar_numero_random(0,1);
-    return (int) (149.23 + 172.32*(pow(rand, 0.94075) - 1)/-0.94075) * 60;
+    double rand = generar_numero_random(0,0.9971);
+    return (int) (rand*(29.92+0.23167) / 0.23167 * 60);
+    // return (int) (-0.08428 + 29.439*(pow(rand,0.97201) - 1)/-0.97201) * 60;
 }
 
 int generar_intervalo_reclamo(){
